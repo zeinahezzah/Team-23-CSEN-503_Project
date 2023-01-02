@@ -29,32 +29,50 @@ app.get('/',function(req,res){
 });
 
 //login function
-
 app.post('/login',function(req,res){
   const collection = req.app.locals.collection;
   var x = req.body.username;
   var y = req.body.password;
-  const f = collection.find({ name: x, pass: y }).toArray((err, result) => {
-  var t = {name: x, pass: y }
-  var tt = JSON.stringify(t);
 
   if (x == "" || y == ""){
     alert("Please make sure you entered all required data");
-  }
-  
-  else if(result.length == 0){
-    alert("User Not Found. Make sure the username and password you entered are correct!");
+    req.redirect('/');
   }
 
-  else {
-    sess = req.session;
-    sess.username=req.body.username;
-    sess.password=req.body.password;
-    fs.writeFileSync("user.json" , tt)
-    alert("Welcome, " + x);
-    res.render('home');
-   }
-});
+  else if (x == "admin"){
+    if(y == "admin"){ 
+      sess = req.session;
+      sess.username=x;
+      sess.password=y;
+      alert("Welcome, " + x);
+      res.render('home');
+    }
+    else{
+      alert("Incorrect Password");
+      res.redirect('/');
+    }
+  }
+
+  else{
+    const f = collection.find({ name: test, pass: y }).toArray((err, result) => {
+    var t = {name: x, pass: y }
+    var tt = JSON.stringify(t);
+
+    if(result.length == 0){
+      alert("User Not Found. Make sure the username and password you entered are correct!");
+      res.redirect('/');
+    }
+
+    else {
+      sess = req.session;
+      sess.username=req.body.username;
+      sess.password=req.body.password;
+      fs.writeFileSync("user.json" , tt)
+      alert("Welcome, " + x);
+      res.render('home');
+     }
+   });
+  }
 });
 
 //Get Home Page
